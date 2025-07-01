@@ -1,3 +1,32 @@
+# 📚 Trabajo Integrador - Sistema de Gestión de Biblioteca  
+🧠 Proyecto final del módulo JavaScript  
+Desarrollado por: Brenda Romero  
+
+---
+
+## 🎯 Objetivo del proyecto  
+Cree un sistema de gestión para una biblioteca utilizando JavaScript puro, aplicando:  
+
+- Matrices y objetos  
+- Funciones y estructuras de control  
+- Algoritmos de búsqueda y ordenamiento  
+- Métodos avanzados (`map`, `filter`, `reduce`)  
+- Entrada por consola (`prompt-sync`)  
+- Buenas prácticas y comentarios en el código  
+
+---
+
+## 🗂️ Estructura del proyecto  
+📁 TP INTEGRADOR JS/
+├── 📄 BrendaRomero.js — Archivo principal del proyecto
+├── 📄 package.json — Configuración de Node.js
+├── 📁 node_modules/ — Dependencias (ignorada por Git)
+├── 📄 .gitignore — Ignora node_modules al subir a GitHub
+└── 📄 README.md — Este archivo
+
+yaml
+Copiar
+Editar
 
 ---
 
