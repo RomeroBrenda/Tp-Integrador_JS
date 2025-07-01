@@ -52,7 +52,8 @@ Cada punto de la consigna está claramente comentado en el código:
 
 ## 📎 Archivo con la consigna  
 La consigna original del trabajo integrador está disponible en el siguiente archivo:  
-📄 Ver consigna del trabajo (PDF)  
+📄 [Ver consigna del trabajo (PDF)](./consigna.pdf)
+ 
 
 ---
 
