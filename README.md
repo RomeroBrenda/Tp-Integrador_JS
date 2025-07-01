@@ -25,10 +25,6 @@ Cree un sistema de gestión para una biblioteca utilizando JavaScript puro, apli
 └── 📄 README.md — Este archivo
 ```
 
-yaml
-Copiar
-Editar
-
 ---
 
 ## ✅ Puntos desarrollados  
