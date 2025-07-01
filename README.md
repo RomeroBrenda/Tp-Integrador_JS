@@ -20,7 +20,7 @@ Crear un sistema de gestión para una biblioteca utilizando **JavaScript puro**,
 
 ## 🗂️ Estructura del proyecto
 
-📁 tp-final-biblioteca/  
+📁 TP INTEGRADOR JS/
 ├── 📄 BrendaRomero.js — Archivo principal del proyecto  
 ├── 📄 package.json — Configuración de Node.js  
 ├── 📁 node_modules/ — Dependencias (ignorada por Git)  
