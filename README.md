@@ -16,13 +16,14 @@ Cree un sistema de gestión para una biblioteca utilizando JavaScript puro, apli
 
 ---
 
-## 🗂️ Estructura del proyecto  
+```plaintext
 📁 TP INTEGRADOR JS/
 ├── 📄 BrendaRomero.js — Archivo principal del proyecto
 ├── 📄 package.json — Configuración de Node.js
 ├── 📁 node_modules/ — Dependencias (ignorada por Git)
 ├── 📄 .gitignore — Ignora node_modules al subir a GitHub
 └── 📄 README.md — Este archivo
+```
 
 yaml
 Copiar
