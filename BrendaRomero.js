@@ -198,14 +198,12 @@ const borrarLibro = (id) => {
 
 const registrarUsuario = (nombre, email) => {
 
-  // 🔍 Verificamos si el array "usuarios" tiene elementos.
-  // ✅ Si tiene, tomamos el ID del último usuario y le sumamos 1 para crear un nuevo ID único.
-  // 🆕 Si está vacío, asignamos el ID 1 porque será el primer usuario.
+  // Generamos un nuevo ID único basado en el último usuario registrado o 1 si no hay usuarios.
   let nuevoId = usuarios.length > 0 
   ? usuarios[usuarios.length - 1]. id + 1 
   : 1;
   
-  // Creamos un nuevo objeto usuario con los datos proporcionados.
+  // Creamos el usuario con los datos recibidos y sin libros prestados.
   let nuevoUsuario = {
     id: nuevoId,
     nombre: nombre,
@@ -224,14 +222,14 @@ const mostrarTodosLosUsuarios = () => {
 };
 
 // c) Funcion para buscar un usuario por su email.
-// Usamos el método .find() para buscar el primer usuario que coincida con el email proporcionado.
+// Retorna el primer usuario que coincida o null si no existe
 
 const buscarUsuario = (email) => {
   let usuarioEncontrado = usuarios.find(usuario => usuario.email === email);
   return usuarioEncontrado || null;
 };
 
-// d) Funcion para eliminar un usuario.
+// d) Funcion para eliminar un usuario según su nombre y su email.
 //  Usamos .filter() para crear un nuevo array sin el usuario que coincida con ambos datos.
 
 const borrarUsuario = (nombre, email) => {
@@ -241,5 +239,38 @@ const borrarUsuario = (nombre, email) => {
 
 };
 
+// PUNTO 4: 
 
+const prestarLibro = (idLibro, idUsuario) => {
+  let libro = libros.find(libro => libro.id === idLibro);
+  // NOTA: Mas adelante verificar si existe o si esta disponible.
+  
+  // ❌ Si no encontramos el libro, salimos de la función.
+  if (!libro) {
+    console.log("¡Libro no encontrado!");
+    return
+  }
 
+  // ⛔️ Revisamos si el libro ya está prestado y no disponible para prestamo.
+  if (!libro.disponible) {
+    console.log("¡El libro no está disponible para prestamo!");
+    return;
+  }
+  
+  // 👤 Buscamos al usuario para saber a quién le prestamos el libro.
+  let usuario = usuarios.find(usuario => usuario.id === idUsuario);
+
+  // Verificamos que exista el usuario.
+  // ❌ Si el usuario no existe, avisamos y no prestamos el libro.
+  if (!usuario) {
+    console.log("¡Usuario no encontrado!");
+    return;
+  }
+
+  // ➕ Usamos .push() para añadir el libro a la lista de libros prestados del usuario.
+  usuario.librosPrestados.push(idLibro);
+  
+  // 🚫 Marcamos el libro como no disponible porque ya fue prestado
+  libro.disponible = false;
+  console.log(`El libro ${libro.titulo} fue prestado a ${usuario.nombre}.`);
+};
