@@ -5,7 +5,7 @@
 // a) Creamos un array llamado "libros" que contiene 10 objetos.
 // _ Cada objeto representa un libro con: id, titulo, autor, año, genero, y si esta disponible o no.
  
-const libros = [
+let libros = [
     {
         id : 1,
         titulo : "Cien años de soledad",
@@ -101,7 +101,7 @@ const libros = [
 /* _ Cada objeto representa un usuario con id, nombre, email y un array con los IDs de los libros que
 tiene prestados. */
 
-const usuarios = [
+let usuarios = [
     {
     id: 1,
     nombre: "Lucía Martínez",
@@ -173,7 +173,7 @@ const ordenarLibros = (criterio) => {
     for (let pasada = 0; pasada < libros.length - 1; pasada ++) {
         for (let posicionActual = 0; posicionActual < libros.length - 1 - pasada; posicionActual ++) {
 
-            // 👉 "Si el valor del libro actual (por ejemplo, su anio) es mayor al del siguiente libro..."
+            // 👉 "Si el valor del libro actual (por ejemplo, su año) es mayor al del siguiente libro..."
             // ➡️ Entonces están en el orden incorrecto y hay que cambiarlos de lugar.
             if (libros[posicionActual][criterio] > libros [posicionActual + 1] [criterio]) {
 
@@ -193,6 +193,53 @@ const borrarLibro = (id) => {
     libros = libros.filter(libro => libro.id !== id);
 };
 
+// PUNTO 3: FUNCIONES DE GESTION DE USUARIOS
+// a) Funcion para agregar un nuevo usuario al array.
+
+const registrarUsuario = (nombre, email) => {
+
+  // 🔍 Verificamos si el array "usuarios" tiene elementos.
+  // ✅ Si tiene, tomamos el ID del último usuario y le sumamos 1 para crear un nuevo ID único.
+  // 🆕 Si está vacío, asignamos el ID 1 porque será el primer usuario.
+  let nuevoId = usuarios.length > 0 
+  ? usuarios[usuarios.length - 1]. id + 1 
+  : 1;
+  
+  // Creamos un nuevo objeto usuario con los datos proporcionados.
+  let nuevoUsuario = {
+    id: nuevoId,
+    nombre: nombre,
+    email: email,
+    librosPrestados: []
+  }
+  
+  // Utilizamos el método .push() para agregar el nuevo usuario al array "usuarios".
+  usuarios.push (nuevoUsuario);
+};
+
+// b) Funcion para mostrar todos los usuarios registrados.
+
+const mostrarTodosLosUsuarios = () => {
+  return usuarios;
+};
+
+// c) Funcion para buscar un usuario por su email.
+// Usamos el método .find() para buscar el primer usuario que coincida con el email proporcionado.
+
+const buscarUsuario = (email) => {
+  let usuarioEncontrado = usuarios.find(usuario => usuario.email === email);
+  return usuarioEncontrado || null;
+};
+
+// d) Funcion para eliminar un usuario.
+//  Usamos .filter() para crear un nuevo array sin el usuario que coincida con ambos datos.
+
+const borrarUsuario = (nombre, email) => {
+  usuarios = usuarios.filter(usuario => {
+    return !(usuario.nombre === nombre && usuario.email === email);
+  });
+
+};
 
 
 

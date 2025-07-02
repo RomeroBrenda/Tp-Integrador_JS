@@ -1,0 +1,23 @@
+{
+  "name": "tp-integrador-js",
+  "version": "1.0.0",
+  "main": "BrendaRomero.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomeroBrenda/Tp-Integrador_JS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RomeroBrenda/Tp-Integrador_JS/issues"
+  },
+  "homepage": "https://github.com/RomeroBrenda/Tp-Integrador_JS#readme",
+  "description": "",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}
