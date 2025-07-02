@@ -239,38 +239,27 @@ const borrarUsuario = (nombre, email) => {
 
 };
 
-// PUNTO 4: 
+// PUNTO 4: SISTEMA DE PRESTAMOS
+// a) Función para prestar un libro: marca el libro como no disponible y lo asigna al usuario.
+// Busca el libro y usuario por ID, verifica disponibilidad y actualiza el estado.
 
 const prestarLibro = (idLibro, idUsuario) => {
   let libro = libros.find(libro => libro.id === idLibro);
-  // NOTA: Mas adelante verificar si existe o si esta disponible.
   
-  // ❌ Si no encontramos el libro, salimos de la función.
-  if (!libro) {
-    console.log("¡Libro no encontrado!");
-    return
-  }
-
-  // ⛔️ Revisamos si el libro ya está prestado y no disponible para prestamo.
-  if (!libro.disponible) {
-    console.log("¡El libro no está disponible para prestamo!");
+  if (!libro || !libro.disponible) {
+    console.log("¡El libro no esta disponible o no fue encontrado!");
     return;
   }
   
-  // 👤 Buscamos al usuario para saber a quién le prestamos el libro.
   let usuario = usuarios.find(usuario => usuario.id === idUsuario);
 
-  // Verificamos que exista el usuario.
-  // ❌ Si el usuario no existe, avisamos y no prestamos el libro.
   if (!usuario) {
     console.log("¡Usuario no encontrado!");
     return;
   }
 
-  // ➕ Usamos .push() para añadir el libro a la lista de libros prestados del usuario.
   usuario.librosPrestados.push(idLibro);
   
-  // 🚫 Marcamos el libro como no disponible porque ya fue prestado
   libro.disponible = false;
   console.log(`El libro ${libro.titulo} fue prestado a ${usuario.nombre}.`);
 };
