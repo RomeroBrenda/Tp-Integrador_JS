@@ -281,7 +281,8 @@ const devolverLibro = (idLibro, idUsuario) => {
 };
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
-// a) 
+// a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
+// Total de libros, cantidad de libros prestados, cantidad de libros por género, y los libros más antiguo y más nuevo.
 
 const totalLibros = libros.length;
 
@@ -295,6 +296,45 @@ const librosPorGenero = libros.reduce((acumulador, libro) => {
   }
   return acumulador;
 }, {});
+
+const libroMasAntiguo = libros.reduce((acumulador, libroActual) => {
+  if (libroActual.anio < acumulador.anio) {
+    return libroActual;
+  }
+  return acumulador;
+});
+
+
+const libroMasNuevo = libros.reduce((acumulador, libroActual) => {
+  if (libroActual.anio > acumulador.anio) {
+    return libroActual;
+  }
+  return acumulador;
+});
+
+const generarReporteDeLibros = () => {
+  return {
+    totalLibros : totalLibros,
+    librosPrestados: librosPrestados,
+    librosPorGenero: librosPorGenero,
+    libroMasAntiguo: {
+      titulo: libroMasAntiguo.titulo,
+      anio: libroMasAntiguo.anio
+    },
+    libroMasNuevo: {
+      titulo: libroMasNuevo.titulo,
+      anio: libroMasNuevo.anio
+    }
+  };
+};
+// NOTA: En las futuras mejoras incluir: 
+// _Agregar validaciones para manejar casos donde el array de libros esté vacío.
+// _Normalizar y estandarizar la presentación del reporte (devolver solo título y año en vez de todo el objeto).
+// _Posibilidad de solicitar partes específicas del reporte según necesidad del usuario.
+
+
+
+
 
 
 
