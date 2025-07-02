@@ -2,8 +2,8 @@
 // Sistema de Gestion de una Biblioteca
 
 // PUNTO 1: ESTRUCTURA DE DATOS
-// a) Creamos un array llamado "libros" que contiene 10 objetos.
-// _ Cada objeto representa un libro con: id, titulo, autor, año, genero, y si esta disponible o no.
+// a) Array "libros" con 10 objetos, cada uno representando un libro con sus propiedades.
+// Las propiedades son: id, titulo, autor, año, genero, y si esta disponible o no.
  
 let libros = [
     {
@@ -97,9 +97,8 @@ let libros = [
   }
 ];
 
-// b) Creamos un array llamado "usuarios" que contiene 5 objetos.
-/* _ Cada objeto representa un usuario con id, nombre, email y un array con los IDs de los libros que
-tiene prestados. */
+// b) Array "usuarios" con 5 objetos, cada uno representando un usuario con sus propiedades.
+// Las propiedades son: id, nombre, email y un array con los IDs de los libros que tiene prestados.
 
 let usuarios = [
     {
@@ -135,7 +134,7 @@ let usuarios = [
 ];
 
 // PUNTO 2: FUNCIONES DE GESTION DE LIBROS
-// a) Funcion para agregar un nuevo libro al array.
+// a) Funcion que agrega un nuevo libro al array.
 
 const agregarLibro = (id, titulo, autor, anio, genero) => {
     let nuevoLibro = {
@@ -150,7 +149,7 @@ const agregarLibro = (id, titulo, autor, anio, genero) => {
     libros.push(nuevoLibro);
 };
 
-// b) Funcion para buscar un libro segun el criterio indicado (titulo, autor o genero).
+// b) Funcion que busca un libro segun el criterio indicado (titulo, autor o genero).
 
 // NOTA: Más adelante agregar validación para verificar que el criterio exista en los objetos.
 // Esto evitará errores si se ingresa un criterio inválido en "buscarLibro2 o "ordenarLibros".
@@ -167,17 +166,15 @@ const buscarLibro = (criterio, valor) => {
 };
 // NOTA: más adelante se puede mejorar para que la búsqueda no distinga mayúsculas/minúsculas ni tildes.
 
-// c) Funcion para ordenar libros por año usando "bubble sort".
+// c) Función que ordena el array "libros" según un criterio utilizando el algoritmo "bubble sort".
 
 const ordenarLibros = (criterio) => {
     for (let pasada = 0; pasada < libros.length - 1; pasada ++) {
         for (let posicionActual = 0; posicionActual < libros.length - 1 - pasada; posicionActual ++) {
 
-            // 👉 "Si el valor del libro actual (por ejemplo, su año) es mayor al del siguiente libro..."
-            // ➡️ Entonces están en el orden incorrecto y hay que cambiarlos de lugar.
+            // Compara el valor del libro actual con el siguiente según el criterio.
+            // Si el libro actual tiene un valor mayor, se intercambian de posición.
             if (libros[posicionActual][criterio] > libros [posicionActual + 1] [criterio]) {
-
-                // Intercambiamos los libros
                 let temporal = libros[posicionActual];
                 libros[posicionActual] = libros[posicionActual + 1];
                 libros[posicionActual + 1] = temporal;
@@ -186,62 +183,54 @@ const ordenarLibros = (criterio) => {
     }
 };
 
-// d) Funcion para eliminar el libro que se le pase por parametro del array "libros".
-// Utilizamos el metodo .filter() para crear un nuevo array sin el libro con ese id.
+// d) Función que elimina un libro del array "libros" según su id.
 
 const borrarLibro = (id) => {
     libros = libros.filter(libro => libro.id !== id);
 };
 
 // PUNTO 3: FUNCIONES DE GESTION DE USUARIOS
-// a) Funcion para agregar un nuevo usuario al array.
+// a) Funcion que agrega un nuevo usuario al array "usuarios" asignándole un ID único y sin libros prestados.
 
 const registrarUsuario = (nombre, email) => {
-
-  // Generamos un nuevo ID único basado en el último usuario registrado o 1 si no hay usuarios.
   let nuevoId = usuarios.length > 0 
   ? usuarios[usuarios.length - 1]. id + 1 
   : 1;
   
-  // Creamos el usuario con los datos recibidos y sin libros prestados.
   let nuevoUsuario = {
     id: nuevoId,
     nombre: nombre,
     email: email,
     librosPrestados: []
   }
-  
-  // Utilizamos el método .push() para agregar el nuevo usuario al array "usuarios".
+
   usuarios.push (nuevoUsuario);
 };
 
-// b) Funcion para mostrar todos los usuarios registrados.
+// b) Funcion que devuelve el array completo de usuarios registrados.
 
 const mostrarTodosLosUsuarios = () => {
   return usuarios;
 };
 
-// c) Funcion para buscar un usuario por su email.
-// Retorna el primer usuario que coincida o null si no existe
-
+// c) Funcion que busca y retorna el primer usuario que coincida con el email proporcionado. 
+// Retorna null si no existe.
 const buscarUsuario = (email) => {
   let usuarioEncontrado = usuarios.find(usuario => usuario.email === email);
   return usuarioEncontrado || null;
 };
 
-// d) Funcion para eliminar un usuario según su nombre y su email.
-//  Usamos .filter() para crear un nuevo array sin el usuario que coincida con ambos datos.
+// d) Funcion que elimina del array "usuarios" al usuario que coincida con nombre y email indicados.
 
 const borrarUsuario = (nombre, email) => {
   usuarios = usuarios.filter(usuario => {
     return !(usuario.nombre === nombre && usuario.email === email);
   });
-
 };
 
 // PUNTO 4: SISTEMA DE PRESTAMOS
-// a) Función para prestar un libro: marca el libro como no disponible y lo asigna al usuario.
-// Busca el libro y usuario por ID, verifica disponibilidad y actualiza el estado.
+// a) Función para prestar un libro: verifican la existencia y disponibilidad del libro y del usuario.
+// Actualiza el estado del libro y los préstamos del usuario.
 
 const prestarLibro = (idLibro, idUsuario) => {
   let libro = libros.find(libro => libro.id === idLibro);
@@ -263,3 +252,4 @@ const prestarLibro = (idLibro, idUsuario) => {
   libro.disponible = false;
   console.log(`El libro ${libro.titulo} fue prestado a ${usuario.nombre}.`);
 };
+
