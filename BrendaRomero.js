@@ -288,7 +288,6 @@ const devolverLibro = (idLibro, idUsuario) => {
 // Se obtiene la cantidad total de libros en la biblioteca.
 const totalLibros = libros.length;
 
-
 // Se obtiene la cantidad de libros cuyo estado es "no disponible" (prestados).
 const librosPrestados = libros.filter(libro => !libro.disponible).length;
 
@@ -347,12 +346,18 @@ const generarReporteDeLibros = () => {
 
 const librosConPalabrasEnTitulo = () => {
   let librosFiltrados = libros.filter(libro => {
-    let palabras = libro.titulo.split(" ");
-    return palabras.length > 1;
+    let titulo = libro.titulo;
+    let tieneVariasPalabras = titulo.trim().split(" ").length > 1;
+    let soloLetras = /^[a-zA-Z\s]+$/.test(titulo);
+    return tieneVariasPalabras && soloLetras;
   });
 
-  console.log(librosFiltrados);
+  let titulos = librosFiltrados.map(libro => libro.titulo);
+  console.log(titulos);
 };
+
+
+
 // NOTA: Terminar este punto: falta agregar validacion para que los titulos no incluyan números 
 // o caracteres especiales.
 
