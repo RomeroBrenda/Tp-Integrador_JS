@@ -341,25 +341,26 @@ const generarReporteDeLibros = () => {
 // _Posibilidad de solicitar partes específicas del reporte según necesidad del usuario.
 
 // PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
-// a) Función que identifica los libros cuyo título contiene más de una palabra.
-// Devuelve un array con los objetos que cumplen esa condición y los muestra por consola.
+// a) Función que identifica los libros cuyo título contiene más de una palabra compuesta solo por letras.
 
 const librosConPalabrasEnTitulo = () => {
   let librosFiltrados = libros.filter(libro => {
     let titulo = libro.titulo;
+
+    // Verifica que el titulo tenga mas de una palabra.
     let tieneVariasPalabras = titulo.trim().split(" ").length > 1;
-    let soloLetras = /^[a-zA-Z\s]+$/.test(titulo);
+
+    // Verifica que el titulo contenga solo letras (incluyendo tildes, ñ y ü) y espacios.
+    let soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(titulo);
     return tieneVariasPalabras && soloLetras;
   });
-
+  
+  // Se genera un nuevo array con los títulos validos.
   let titulos = librosFiltrados.map(libro => libro.titulo);
+
   console.log(titulos);
+  return titulos;
 };
-
-
-
-// NOTA: Terminar este punto: falta agregar validacion para que los titulos no incluyan números 
-// o caracteres especiales.
 
 // PUNTO 7: CALCULOS ESTADISTICOS 
 // Función que calcula estadisticas generales de los libros en la biblioteca.
