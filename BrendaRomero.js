@@ -282,12 +282,17 @@ const devolverLibro = (idLibro, idUsuario) => {
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
 // a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
-// Total de libros, cantidad de libros prestados, cantidad de libros por género, y los libros más antiguo y más nuevo.
+// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo.
 
+
+// Se obtiene la cantidad total de libros en la biblioteca.
 const totalLibros = libros.length;
 
+
+// Se obtiene la cantidad de libros cuyo estado es "no disponible" (prestados).
 const librosPrestados = libros.filter(libro => !libro.disponible).length;
 
+// Se agrupan los libros por género y se cuenta cuántos hay por cada uno.
 const librosPorGenero = libros.reduce((acumulador, libro) => {
   if (acumulador[libro.genero]) {
     acumulador[libro.genero]++;
@@ -297,6 +302,8 @@ const librosPorGenero = libros.reduce((acumulador, libro) => {
   return acumulador;
 }, {});
 
+
+// Se identifica el libro con el año de publicación más antiguo.
 const libroMasAntiguo = libros.reduce((acumulador, libroActual) => {
   if (libroActual.anio < acumulador.anio) {
     return libroActual;
@@ -304,7 +311,7 @@ const libroMasAntiguo = libros.reduce((acumulador, libroActual) => {
   return acumulador;
 });
 
-
+// Se identifica el libro con el año de publicación más reciente.
 const libroMasNuevo = libros.reduce((acumulador, libroActual) => {
   if (libroActual.anio > acumulador.anio) {
     return libroActual;
@@ -312,6 +319,8 @@ const libroMasNuevo = libros.reduce((acumulador, libroActual) => {
   return acumulador;
 });
 
+
+// Se construye un objeto con el reporte consolidado y se retorna.
 const generarReporteDeLibros = () => {
   return {
     totalLibros : totalLibros,
@@ -332,6 +341,81 @@ const generarReporteDeLibros = () => {
 // _Normalizar y estandarizar la presentación del reporte (devolver solo título y año en vez de todo el objeto).
 // _Posibilidad de solicitar partes específicas del reporte según necesidad del usuario.
 
+// PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
+// a) Función que identifica los libros cuyo título contiene más de una palabra.
+// Devuelve un array con los objetos que cumplen esa condición y los muestra por consola.
+
+const librosConPalabrasEnTitulo = () => {
+  let librosFiltrados = libros.filter(libro => {
+    let palabras = libro.titulo.split(" ");
+    return palabras.length > 1;
+  });
+
+  console.log(librosFiltrados);
+};
+// NOTA: Terminar este punto: falta agregar validacion para que los titulos no incluyan números 
+// o caracteres especiales.
+
+// PUNTO 7: CALCULOS ESTADISTICOS 
+// Función que calcula estadisticas generales de los libros en la biblioteca.
+// Incluye el promedio de años de publicación, el año más frecuente, y la diferencia entre el libro 
+// más antiguo y el más nuevo.
+
+const calcularEstadisticas = () => {
+
+  // Se genera un array con todos los años de publicación.
+  let anios = libros.map(libro => libro.anio);
+
+  // Se suma el total de todos los años, se calcula el promedio y se redondea con Math.round().
+  let sumaAnios = anios.reduce ((acumulador, anio) => acumulador + anio, 0);
+  let promedio = Math.round(sumaAnios / anios.length);
+
+  // Se construye un  objeto para contar cuántas veces aparece cada año.
+  let frecuenciaAnios = {};
+  for (let libro of libros) {
+    let anio = libro.anio;
+    if (frecuenciaAnios[anio]) {
+      frecuenciaAnios[anio]++;
+    } else {
+      frecuenciaAnios[anio] = 1;
+    }
+  }
+
+  // Se determina cual es el año que aparece con mayor frecuencia.
+  let anioMasFrecuente = null; 
+  let maxFrecuencia = 0;
+  for (let anio in frecuenciaAnios) {
+    if (frecuenciaAnios[anio] > maxFrecuencia) {
+      maxFrecuencia = frecuenciaAnios[anio];
+      anioMasFrecuente = Number (anio);
+    }
+  }
+
+  // Se inicializan variables para rastrear el año más antiguo y el más reciente.
+  let anioMasAntiguo = libros [0].anio;
+  let anioMasNuevo = libros [0].anio;
+
+  // Se recorre el array para identificar el año más bajo y más alto.
+  libros.forEach(libro => {
+    if (libro.anio < anioMasAntiguo) anioMasAntiguo = libro.anio;
+    if (libro.anio > anioMasNuevo) anioMasNuevo = libro.anio;
+  });
+  
+  // Se calcula la diferencia de años entre ambos extremos.
+  let diferenciaAnios = anioMasNuevo - anioMasAntiguo;
+
+  console.log("Promedio de años de publicacion:", promedio);
+  console.log("Año de publicación más frecuente:", anioMasFrecuente);
+  console.log("Diferencia entre libro más antiguo y más nuevo:", diferenciaAnios);
+
+  return {
+    promedio,
+    anioMasFrecuente,
+    diferenciaAnios
+  };
+};
+// NOTA: Mejoras pendientes: verificar si hay años repetidos antes de asignar el año mas frecuente.
+// Si todos los años aparecen una sola vez, mostrar un mensaje que indique que no hay años repetidos.
 
 
 
