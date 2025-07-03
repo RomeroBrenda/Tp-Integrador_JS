@@ -423,6 +423,26 @@ const calcularEstadisticas = () => {
 // NOTA: Mejoras pendientes: verificar si hay años repetidos antes de asignar el año mas frecuente.
 // Si todos los años aparecen una sola vez, mostrar un mensaje que indique que no hay años repetidos.
 
+// PUNTO 8: MANEJO DE CADENAS
+// a) Funcion que normaliza los datos de los libros y usuarios.
+
+const normalizarDatos = () => {
+ 
+ // Convierte todos los títulos de los libros a mayúsculas.
+ libros.forEach(libro => {
+  libro.titulo = libro.titulo.toUpperCase(); 
+ });
+
+ // Elimina espacios en blanco al inicio y final del nombre del autor.
+ libros.forEach(libro => {
+  libro.autor = libro.autor.trim();
+ });
+ 
+// Convierte todos los emails de los usuarios a minúsculas.
+ usuarios.forEach(usuario => {
+  usuario.email = usuario.email.toLowerCase(); // Convierte el email a minúsculas.
+ });
+};
 
 
 
