@@ -156,15 +156,23 @@ const agregarLibro = (id, titulo, autor, anio, genero) => {
 // NOTA: Más adelante agregar validación para verificar que el criterio exista en los objetos.
 // Esto evitará errores si se ingresa un criterio inválido en "buscarLibro2 o "ordenarLibros".
 const buscarLibro = (criterio, valor) => {
-    let resultados = [];
 
-    for (let libro of libros) {
-        if (libro[criterio] === valor) {
-            resultados.push(libro);
-        }
-    }
+  // Verifica que el criterio sea uno de los válidos.
+  const criteriosValidos = ["titulo", "autor", "genero"];
+  if (!criteriosValidos.includes(criterio)) {
+    console.log("⚠️ Criterio inválido. Debe ser: titulo, autor o genero.");
+    return [];
+  }
+
+  // Filtra libros comparando sin distinguir mayúsculas/minúsculas.
+  let resultados = libros.filter( libro => {
+   return libro[criterio].toLowerCase() === valor.toLowerCase();
+  });
     
-    return resultados;
+  if (resultados.length === 0) {
+    console.log("⚠️ No se encontraron libros con ese criterio.");
+  }
+  return resultados;
 };
 // NOTA: más adelante se puede mejorar para que la búsqueda no distinga mayúsculas/minúsculas ni tildes.
 
