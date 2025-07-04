@@ -1,6 +1,8 @@
 // ESTRUCTURA DEL ARCHIVO
 // Sistema de Gestion de una Biblioteca
 
+const prompt = require("prompt-sync")();
+
 // PUNTO 1: ESTRUCTURA DE DATOS
 // a) Array "libros" con 10 objetos, cada uno representando un libro con sus propiedades.
 // Las propiedades son: id, titulo, autor, año, genero, y si esta disponible o no.
@@ -362,7 +364,7 @@ const librosConPalabrasEnTitulo = () => {
   return titulos;
 };
 
-// PUNTO 7: CALCULOS ESTADISTICOS 
+// PUNTO 7: CALCULOS ESTADISTICOS n
 // Función que calcula estadisticas generales de los libros en la biblioteca.
 // Incluye el promedio de años de publicación, el año más frecuente, y la diferencia entre el libro 
 // más antiguo y el más nuevo.
@@ -444,10 +446,56 @@ const normalizarDatos = () => {
  });
 };
 
+// PUNTO 9: INTERFAZ DE USUARIO POR CONSOLA
 
+const menuPrincipal = () => {
+  let opcion;
 
+  do {
+    console.log("\n--- MENÚ PRINCIPAL ---");
+    console.log("1. Agregar libro");
+    console.log("2. Buscar libro");
+    console.log("3. Mostrar usuarios");
+    console.log("4. Generar reporte");
+    console.log("5. Salir");
 
+    opcion = prompt("Seleccione una opción: ");
 
+    switch (opcion) {
+      case "1":
+        let id = Number(prompt("Ingrese el ID del libro: "));
+        let titulo = prompt("Ingrese el título del libro : ");
+        let autor = prompt("Ingrese el autor del libro: ");
+        let anio = Number(prompt("Ingrese el año de publicacion: "));
+        let genero = prompt("Ingrese el género del libro: ");
+        agregarLibro(id, titulo, autor, anio, genero);
+        console.log("📚 Libro agregado correctamente.");
+        break;
 
+      case "2":
+        let criterio = prompt("Buscar por (titulo, autor, genero): ");
+        let valor = prompt("Ingrese el valor a buscar: ");
+        let resultados = buscarLibro(criterio, valor);
+        console.log(resultados);
+        break;
 
+      case "3":
+        console.log(mostrarTodosLosUsuarios());
+        break;
+
+      case "4":
+        console.log(generarReporteDeLibros());
+        break;
+
+      case "5":
+        console.log("Saliendo del sistema...");
+        break;
+    
+      default:
+        console.log("⚠️ Opción no válida. Intente nuevamente");
+    }
+  } while (opcion !== "5");
+};
+
+menuPrincipal();
 
