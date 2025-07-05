@@ -139,22 +139,33 @@ let usuarios = [
 // a) Funcion que agrega un nuevo libro al array.
 
 const agregarLibro = (id, titulo, autor, anio, genero) => {
-    let nuevoLibro = {
-        id : id,
-        titulo : titulo,
-        autor : autor,
-        anio : anio,
-        genero : genero,
-        disponible : true
-    };
+  // Verifica que los datos no esten vacios ni sean inválidos.
+  if (!id || !titulo || !autor || !anio || !genero || isNaN(id) || isNaN(anio)) {
+    console.log("❌ Datos inválidos. Verifique los campos ingresados.");
+    return;
+  }
+  
+  // Verifica que no exista un libro con el mismo ID.
+  if (libros.some(libro => libro.id === id)) {
+    console.log("❌ Ya existe un libro con ese ID.");
+    return;
+  }
+
+  const nuevoLibro = {
+    id : id,
+    titulo : titulo,
+    autor : autor,
+    anio : anio,
+    genero : genero,
+    disponible : true
+  };
     
-    libros.push(nuevoLibro);
+  libros.push(nuevoLibro);
+  console.log(`✅ Libro "${titulo}" agregado correctamente.`);
 };
 
 // b) Funcion que busca un libro segun el criterio indicado (titulo, autor o genero).
 
-// NOTA: Más adelante agregar validación para verificar que el criterio exista en los objetos.
-// Esto evitará errores si se ingresa un criterio inválido en "buscarLibro2 o "ordenarLibros".
 const buscarLibro = (criterio, valor) => {
 
   // Verifica que el criterio sea uno de los válidos.
@@ -164,9 +175,9 @@ const buscarLibro = (criterio, valor) => {
     return [];
   }
 
-  // Filtra libros comparando sin distinguir mayúsculas/minúsculas.
-  let resultados = libros.filter( libro => {
-   return libro[criterio].toLowerCase() === valor.toLowerCase();
+  // Se filtran los libros según el criterio indicado, ignorando mayúsculas y permitiendo coincidencias parciales.
+  const resultados = libros.filter( libro => {
+    libro[criterio].toLowerCase().includes(valor.toLowerCase());
   });
     
   if (resultados.length === 0) {
@@ -174,29 +185,57 @@ const buscarLibro = (criterio, valor) => {
   }
   return resultados;
 };
-// NOTA: más adelante se puede mejorar para que la búsqueda no distinga mayúsculas/minúsculas ni tildes.
 
 // c) Función que ordena el array "libros" según un criterio utilizando el algoritmo "bubble sort".
+// Esta función modifica el array original "libros" directamente.
 
 const ordenarLibros = (criterio) => {
-    for (let pasada = 0; pasada < libros.length - 1; pasada ++) {
-        for (let posicionActual = 0; posicionActual < libros.length - 1 - pasada; posicionActual ++) {
 
-            // Compara el valor del libro actual con el siguiente según el criterio.
-            // Si el libro actual tiene un valor mayor, se intercambian de posición.
-            if (libros[posicionActual][criterio] > libros [posicionActual + 1] [criterio]) {
+  const criteriosValidos = ["id", "titulo", "autor", "anio", "genero", "disponible"];
+
+  // Valida que el criterio este dentro de una lista de campos permitidos.
+  if (!criteriosValidos.includes(criterio)) {
+    console.log("❌ Criterio inválido. Usá uno de los siguientes:", criteriosValidos.join(","));
+    return;
+  }
+
+  // Se valida que el array de libros no esté vacío antes de ordenar.
+  if (libros.length === 0) {
+    console.log("⚠️ No hay libros para ordenar.");
+    return;
+  }
+
+  for (let pasada = 0; pasada < libros.length - 1; pasada ++) {
+    for (let posicionActual = 0; posicionActual < libros.length - 1 - pasada; posicionActual ++) {
+
+      // Compara el valor del libro actual con el siguiente según el criterio.
+      // Si el libro actual tiene un valor mayor, se intercambian de posición.
+      if (libros[posicionActual][criterio] > libros [posicionActual + 1] [criterio]) {
                 let temporal = libros[posicionActual];
                 libros[posicionActual] = libros[posicionActual + 1];
                 libros[posicionActual + 1] = temporal;
-            }
-        }
+       }
     }
+  }
+
+  console.log(`✅ Libros ordenados por ${criterio}.`);
 };
 
 // d) Función que elimina un libro del array "libros" según su id.
 
 const borrarLibro = (id) => {
-    libros = libros.filter(libro => libro.id !== id);
+
+  // Se verifica si existe un libro con el ID indicado antes de intentar eliminarlo.
+  const existe = libros.some(libro => libro.id === id);
+  
+  if (!existe) {
+    console.log("❌ No se encontró un libro con ese ID.");
+    return;
+  }
+
+  // Se filtran los libros para eliminar el que tiene el ID indicado.
+  libros = libros.filter(libro => libro.id !== id);
+  console.log(`✅ Libro con ID ${id} eliminado correctamente.`);
 };
 
 // PUNTO 3: FUNCIONES DE GESTION DE USUARIOS
@@ -455,6 +494,7 @@ const normalizarDatos = () => {
 };
 
 // PUNTO 9: INTERFAZ DE USUARIO POR CONSOLA
+// Funcion que muestra un menu principal con opciones para la interacción del usuario.
 
 const menuPrincipal = () => {
   let opcion;
@@ -465,7 +505,10 @@ const menuPrincipal = () => {
     console.log("2. Buscar libro");
     console.log("3. Mostrar usuarios");
     console.log("4. Generar reporte");
-    console.log("5. Salir");
+    console.log("5. Registrar usuario");
+    console.log("6. Prestar libro"); 
+
+    console.log("7. Salir");
 
     opcion = prompt("Seleccione una opción: ");
 
@@ -496,13 +539,28 @@ const menuPrincipal = () => {
         break;
 
       case "5":
+        let nombreUsuario = prompt("Ingrese el nombre del usuario: ");
+        let emailUsuario = prompt("Ingrese el email del usuario: ");
+
+        registrarUsuario(nombreUsuario, emailUsuario);
+        console.log("✅ Usuario registrado correctamente.");
+        break;
+
+      case "6":
+        let idLibroPrestar = Number(prompt("Ingrese el ID del libro que desea prestar: "));
+        let idUsuarioPrestar = Number(prompt("Ingrese el ID del usuario al que se le prestará el libro: "));
+
+        prestarLibro(idLibroPrestar, idUsuarioPrestar);
+        break;
+
+      case "7":
         console.log("Saliendo del sistema...");
         break;
     
       default:
         console.log("⚠️ Opción no válida. Intente nuevamente");
     }
-  } while (opcion !== "5");
+  } while (opcion !== "7");
 };
 
 menuPrincipal();
