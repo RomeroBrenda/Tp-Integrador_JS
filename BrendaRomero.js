@@ -317,62 +317,80 @@ const borrarUsuario = (nombre, email) => {
   }
 
   usuarios = usuarios.filter(usuario => 
-    !(usuario.nombre === nombre && usuario.email === email.toLowerCase());
+    !(usuario.nombre === nombre && usuario.email === email.toLowerCase())
   );
   
   console.log(`🗑️ Usuario ${nombre} eliminado correctamente.`);
 };
 
 // PUNTO 4: SISTEMA DE PRESTAMOS
-// a) Función para prestar un libro: verifican la existencia y disponibilidad del libro y del usuario.
-// Actualiza el estado del libro y los préstamos del usuario.
+// a) Función para prestar un libro.
 
 const prestarLibro = (idLibro, idUsuario) => {
   let libro = libros.find(libro => libro.id === idLibro);
   
-  if (!libro || !libro.disponible) {
-    console.log("¡El libro no esta disponible o no fue encontrado!");
+  // Se valida que el libro exista y esté disponible.
+  if (!libro) {
+    console.log("❌ Libro no encontrado.");
     return;
   }
-  
-  let usuario = usuarios.find(usuario => usuario.id === idUsuario);
 
+  if (!libro.disponible) {
+    console.log(`⚠️ El libro "${libro.titulo}" no está disponible actualmente.`);
+    return;
+  }
+
+  const usuario = usuarios.find(usuario => usuario.id === idUsuario);
+
+  // Se valida que el usuario exista.
   if (!usuario) {
-    console.log("¡Usuario no encontrado!");
+    console.log("❌¡Usuario no encontrado!");
     return;
   }
 
-  usuario.librosPrestados.push(idLibro);
-  
-  libro.disponible = false;
-  console.log(`El libro ${libro.titulo} fue prestado a ${usuario.nombre}.`);
+  // Se verifica que el usuario no tenga ya ese libro prestado.
+  if (usuario.librosPrestados.includes(idLibro)) {
+    console.log(`⚠️ El usuario ${usuario.nombre} ya tiene prestado el libro "${libro.titulo}".`);
+    return;
+  }
+
+// Se actualiza el estado de disponibilidad del libro y el registro de préstamos del usuario.
+usuario.librosPrestados.push(idLibro);
+libro.disponible = false;
+
+console.log(`✅ El libro "${libro.titulo}" fue prestado a ${usuario.nombre}.`);
 };
 
-// b) Función para devolver un libro: verifica la existencia del libro y del usuario, como también si el usuario
-// tiene el libro prestado. Actualiza el estado del libro y los préstamos del usuario.
+// b) Función para devolver un libro.
 
 const devolverLibro = (idLibro, idUsuario) => {
-  let libro = libros.find(libro => libro.id === idLibro);
+  const libro = libros.find(libro => libro.id === idLibro);
 
+  // Se valida que el libro exista.
   if (!libro) {
-    console.log("¡Libro no encontrado!");
+    console.log("❌¡Libro no encontrado!");
     return;
   }
 
-  let usuario = usuarios.find(usuario => usuario.id === idUsuario);
+  const usuario = usuarios.find(usuario => usuario.id === idUsuario);
 
+  // Se valida que el usuario exista.
   if (!usuario) {
-    console.log("¡Usuario no encontrado!");
+    console.log("❌¡Usuario no encontrado!");
     return;
   }
 
+  // Se valida que el libro esté entre los libros prestados del usuario.
   if (!usuario.librosPrestados.includes(idLibro)) {
-    console.log(`Elusuario ${usuario.nombre} no tiene prestado el libro: ${libro.titulo}.`);
+    console.log(`⚠️ El usuario ${usuario.nombre} no tiene prestado el libro "${libro.titulo}".`);
     return;
   }
 
+  // Se actualiza el array del usuario eliminando el ID del libro, y se marca como disponible.
   usuario.librosPrestados = usuario.librosPrestados.filter(id => id !== idLibro);
   libro.disponible = true;
+
+  console.log(`✅ El libro "${libro.titulo}" fue devuelto por ${usuario.nombre}.`);
 };
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
