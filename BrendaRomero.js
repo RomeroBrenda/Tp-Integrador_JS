@@ -395,9 +395,26 @@ const devolverLibro = (idLibro, idUsuario) => {
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
 // a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
-// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo
+// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo.
 
 const generarReporteDeLibros = () => {
+
+  // Funcion que permite mostrar una sección específica del reporte de libros.
+  const mostrarSeccionDelReporte = (seccion) => {
+  const reporte = generarReporteDeLibros();
+  if (!reporte) return;
+
+  // Se valida que la sección solicitada exista en el reporte.
+  if (!reporte[seccion]) {
+    console.log("❌ Sección no válida.");
+    console.log("👉 Opciones disponibles: totalLibros, librosPrestados, librosPorGenero, libroMasAntiguo, libroMasNuevo.");
+    return;
+  }
+
+  // Se muestra la sección solicitada del reporte.
+  console.log(`\n📌 ${seccion}:`);
+  console.log(reporte[seccion]);
+};
 
   // Se valida que el array de libros no esté vacío.
   if (libros.length === 0) {
@@ -448,7 +465,6 @@ const reporteDeLibros = {
 
   return reporteDeLibros;
 };
-
 
 // PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
 // a) Función que identifica los libros cuyo título contiene más de una palabra compuesta solo por letras.
@@ -598,8 +614,16 @@ const menuPrincipal = () => {
       case "4":
         const reporte = generarReporteDeLibros();
         if (reporte) {
-         console.log("\n📊 REPORTE DE LIBROS:");
-        console.log(reporte);
+          console.log("\n📊 Reporte general de la biblioteca:");
+          console.log(reporte);
+
+          const deseaVerParte = prompt("¿Querés ver una parte específica del reporte? (si/no): ");
+          if (deseaVerParte.toLowerCase() === "si") {
+            const seccion = prompt("Ingresá la sección que querés ver (totalLibros, librosPrestados, librosPorGenero, libroMasAntiguo, libroMasNuevo): ");
+
+            // Función que muestra solo una parte específica del reporte, según lo que indique el usuario.
+            mostrarSeccionDelReporte(seccion);
+          }
         }
         break;
 
