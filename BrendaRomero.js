@@ -504,60 +504,62 @@ return titulosFiltrados;
 // más antiguo y el más nuevo.
 
 const calcularEstadisticas = () => {
+  if (libros.length === 0) {
+    console.log("⚠️ No hay libros en la biblioteca.");
+    return null;
+  }
 
   // Se genera un array con todos los años de publicación.
-  let anios = libros.map(libro => libro.anio);
+  const anios = libros.map(libro => libro.anio);
 
   // Se suma el total de todos los años, se calcula el promedio y se redondea con Math.round().
-  let sumaAnios = anios.reduce ((acumulador, anio) => acumulador + anio, 0);
-  let promedio = Math.round(sumaAnios / anios.length);
+  const sumaAnios = anios.reduce ((acumulador, anio) => acumulador + anio, 0);
+  const promedio = Math.round(sumaAnios / anios.length);
 
-  // Se construye un  objeto para contar cuántas veces aparece cada año.
-  let frecuenciaAnios = {};
-  for (let libro of libros) {
-    let anio = libro.anio;
-    if (frecuenciaAnios[anio]) {
-      frecuenciaAnios[anio]++;
-    } else {
-      frecuenciaAnios[anio] = 1;
-    }
+  // Se cuenta la frecuencia de aparicion de cada año.
+  const frecuenciaAnios = {};
+  for (const anio of anios) {
+    frecuenciaAnios[anio] = (frecuenciaAnios[anio] || 0) + 1;
   }
 
   // Se determina cual es el año que aparece con mayor frecuencia.
+  const hayRepetidos = Object.values(frecuenciaAnios).some(cantidad => cantidad > 1);
+
   let anioMasFrecuente = null; 
   let maxFrecuencia = 0;
-  for (let anio in frecuenciaAnios) {
-    if (frecuenciaAnios[anio] > maxFrecuencia) {
-      maxFrecuencia = frecuenciaAnios[anio];
-      anioMasFrecuente = Number (anio);
+
+  if (hayRepetidos) {
+    for (const anio in frecuenciaAnios) {
+      if (frecuenciaAnios[anio] > maxFrecuencia) {
+        maxFrecuencia = frecuenciaAnios[anio];
+        anioMasFrecuente = Number(anio);
+      }
     }
   }
 
-  // Se inicializan variables para rastrear el año más antiguo y el más reciente.
-  let anioMasAntiguo = libros [0].anio;
-  let anioMasNuevo = libros [0].anio;
+  // Se identifican el año más antiguo y el más reciente.
+  let anioMasAntiguo = Math.min(...anios);
+  let anioMasNuevo = Math.max(...anios);
 
-  // Se recorre el array para identificar el año más bajo y más alto.
-  libros.forEach(libro => {
-    if (libro.anio < anioMasAntiguo) anioMasAntiguo = libro.anio;
-    if (libro.anio > anioMasNuevo) anioMasNuevo = libro.anio;
-  });
-  
   // Se calcula la diferencia de años entre ambos extremos.
-  let diferenciaAnios = anioMasNuevo - anioMasAntiguo;
+  const diferenciaAnios = anioMasNuevo - anioMasAntiguo;
+  
+  console.log("📈 Promedio de años de publicacion:", promedio);
 
-  console.log("Promedio de años de publicacion:", promedio);
-  console.log("Año de publicación más frecuente:", anioMasFrecuente);
-  console.log("Diferencia entre libro más antiguo y más nuevo:", diferenciaAnios);
+  if (hayRepetidos) {
+    console.log("📅 Año más frecuente:", anioMasFrecuente);
+  } else {
+    console.log("ℹ️ No hay años de publicación repetidos.");
+  }
+
+  console.log("🕓Diferencia entre libro más antiguo y más nuevo:", diferenciaAnios);
 
   return {
     promedio,
-    anioMasFrecuente,
+    anioMasFrecuente: hayRepetidos ? anioMasFrecuente : null,
     diferenciaAnios
   };
 };
-// NOTA: Mejoras pendientes: verificar si hay años repetidos antes de asignar el año mas frecuente.
-// Si todos los años aparecen una sola vez, mostrar un mensaje que indique que no hay años repetidos.
 
 // PUNTO 8: MANEJO DE CADENAS
 // a) Funcion que normaliza los datos de los libros y usuarios.
