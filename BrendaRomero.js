@@ -395,46 +395,44 @@ const devolverLibro = (idLibro, idUsuario) => {
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
 // a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
-// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo.
+// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo
 
-
-// Se obtiene la cantidad total de libros en la biblioteca.
-const totalLibros = libros.length;
-
-// Se obtiene la cantidad de libros cuyo estado es "no disponible" (prestados).
-const librosPrestados = libros.filter(libro => !libro.disponible).length;
-
-// Se agrupan los libros por género y se cuenta cuántos hay por cada uno.
-const librosPorGenero = libros.reduce((acumulador, libro) => {
-  if (acumulador[libro.genero]) {
-    acumulador[libro.genero]++;
-  } else {
-    acumulador[libro.genero] = 1;
-  }
-  return acumulador;
-}, {});
-
-
-// Se identifica el libro con el año de publicación más antiguo.
-const libroMasAntiguo = libros.reduce((acumulador, libroActual) => {
-  if (libroActual.anio < acumulador.anio) {
-    return libroActual;
-  }
-  return acumulador;
-});
-
-// Se identifica el libro con el año de publicación más reciente.
-const libroMasNuevo = libros.reduce((acumulador, libroActual) => {
-  if (libroActual.anio > acumulador.anio) {
-    return libroActual;
-  }
-  return acumulador;
-});
-
-
-// Se construye un objeto con el reporte consolidado y se retorna.
 const generarReporteDeLibros = () => {
-  return {
+
+  // Se valida que el array de libros no esté vacío.
+  if (libros.length === 0) {
+    console.log("⚠️ No hay libros en la biblioteca para generar un reporte.");
+    return null;
+  }
+
+  // Se obtiene la cantidad total de libros en la biblioteca.
+  const totalLibros = libros.length;
+
+  // Se obtiene la cantidad de libros cuyo estado es "no disponible" (prestados).
+  const librosPrestados = libros.filter(libro => !libro.disponible).length;
+
+  // Se agrupan los libros por género y se cuenta cuántos hay por cada uno.
+  const librosPorGenero = libros.reduce((acumulador, libro) => {
+    acumulador[libro.genero] = (acumulador[libro.genero] || 0) + 1;
+    return acumulador;
+  }, {});
+
+  // Se identifica el libro con el año de publicación más antiguo.
+  const libroMasAntiguo = libros.reduce((acumulador, libroActual) => 
+    libroActual.anio < acumulador.anio 
+    ? libroActual 
+    : acumulador
+  );
+
+  // Se identifica el libro con el año de publicación más reciente.
+  const libroMasNuevo = libros.reduce((acumulador, libroActual) => 
+    libroActual.anio > acumulador.anio 
+    ? libroActual 
+    : acumulador
+  );
+
+// Se construye el reporte consolidado.
+const reporteDeLibros = {
     totalLibros : totalLibros,
     librosPrestados: librosPrestados,
     librosPorGenero: librosPorGenero,
@@ -447,11 +445,10 @@ const generarReporteDeLibros = () => {
       anio: libroMasNuevo.anio
     }
   };
+
+  return reporteDeLibros;
 };
-// NOTA: En las futuras mejoras incluir: 
-// _Agregar validaciones para manejar casos donde el array de libros esté vacío.
-// _Normalizar y estandarizar la presentación del reporte (devolver solo título y año en vez de todo el objeto).
-// _Posibilidad de solicitar partes específicas del reporte según necesidad del usuario.
+
 
 // PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
 // a) Función que identifica los libros cuyo título contiene más de una palabra compuesta solo por letras.
@@ -599,7 +596,11 @@ const menuPrincipal = () => {
         break;
 
       case "4":
-        console.log(generarReporteDeLibros());
+        const reporte = generarReporteDeLibros();
+        if (reporte) {
+         console.log("\n📊 REPORTE DE LIBROS:");
+        console.log(reporte);
+        }
         break;
 
       case "5":
