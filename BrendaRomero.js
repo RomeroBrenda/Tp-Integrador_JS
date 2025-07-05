@@ -242,18 +242,41 @@ const borrarLibro = (id) => {
 // a) Funcion que agrega un nuevo usuario al array "usuarios" asignándole un ID único y sin libros prestados.
 
 const registrarUsuario = (nombre, email) => {
-  let nuevoId = usuarios.length > 0 
-  ? usuarios[usuarios.length - 1]. id + 1 
+
+  // Verifica que el nombre y el email no estén vacíos.
+  if (!nombre || !email) {
+    console.log("❌ Nombre y email son obligatorios.");
+    return; 
+  }
+
+  // Se valida el formato del email con una expresión regular básica.
+  const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formatoEmail.test(email)) {
+    console.log("❌ Formato de email inválido.");
+    return;
+  }
+
+  // Se verifica si ya existe un usuario con ese email.
+  if (usuarios.some(usuario => usuario.email === email.toLowerCase())) {
+    console.log("⚠️ Ya existe un usuario registrado con ese email.");
+    return;
+  }
+
+  
+  // Se genera un ID único para el nuevo usuario.
+  const nuevoId = usuarios.length > 0 
+  ? usuarios[usuarios.length - 1].id + 1 
   : 1;
   
   let nuevoUsuario = {
     id: nuevoId,
-    nombre: nombre,
-    email: email,
+    nombre: nombre.trim(), 
+    email: email.toLowerCase(),
     librosPrestados: []
-  }
+  };
 
   usuarios.push (nuevoUsuario);
+  console.log(`✅ Usuario ${nombre} registrado correctamente con ID ${nuevoId}.`);
 };
 
 // b) Funcion que devuelve el array completo de usuarios registrados.
@@ -264,17 +287,40 @@ const mostrarTodosLosUsuarios = () => {
 
 // c) Funcion que busca y retorna el primer usuario que coincida con el email proporcionado. 
 // Retorna null si no existe.
+
 const buscarUsuario = (email) => {
-  let usuarioEncontrado = usuarios.find(usuario => usuario.email === email);
-  return usuarioEncontrado || null;
+
+  // Se busca el primer usuario cuyo email coincida exactamente, ignorando mayúsculas.
+  const usuarioEncontrado = usuarios.find(usuario => usuario.email === email.toLowerCase());
+
+  if (!usuarioEncontrado) {
+    console.log("⚠️ No se encontró un usuario con ese email.");
+    return null;
+  }
+
+  return usuarioEncontrado;
 };
 
 // d) Funcion que elimina del array "usuarios" al usuario que coincida con nombre y email indicados.
 
 const borrarUsuario = (nombre, email) => {
-  usuarios = usuarios.filter(usuario => {
-    return !(usuario.nombre === nombre && usuario.email === email);
-  });
+
+  const usuarioExiste = usuarios.some(usuario =>
+
+    // Se verifica la existencia de un usuario con nombre y email exactos antes de eliminarlo.
+    usuario.nombre === nombre && usuario.email === email.toLowerCase()
+  );
+
+  if (!usuarioExiste) {
+    console.log("❌ No se encontró un usuario con ese nombre y email.");
+    return;
+  }
+
+  usuarios = usuarios.filter(usuario => 
+    !(usuario.nombre === nombre && usuario.email === email.toLowerCase());
+  );
+  
+  console.log(`🗑️ Usuario ${nombre} eliminado correctamente.`);
 };
 
 // PUNTO 4: SISTEMA DE PRESTAMOS
