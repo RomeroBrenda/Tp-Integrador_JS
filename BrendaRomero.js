@@ -166,6 +166,16 @@ const agregarLibro = (id, titulo, autor, anio, genero) => {
 
 // b) Funcion que busca un libro segun el criterio indicado (titulo, autor o genero).
 
+// Función que normaliza un texto eliminando tildes, espacios al inicio/final y convierte a minúsculas.
+const normalizarTexto = (texto) => {
+  if (!texto) return "";
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0301\u0308]/g, "") 
+    .trim();
+};
+
 const buscarLibro = (criterio, valor) => {
 
   // Verifica que el criterio sea uno de los válidos.
@@ -175,14 +185,18 @@ const buscarLibro = (criterio, valor) => {
     return [];
   }
 
+  const valorNormalizado = normalizarTexto(valor);
+
   // Se filtran los libros según el criterio indicado, ignorando mayúsculas y permitiendo coincidencias parciales.
   const resultados = libros.filter( libro => {
-    libro[criterio].toLowerCase().includes(valor.toLowerCase());
+    const campoNormalizado = normalizarTexto(libro[criterio]);
+    return campoNormalizado.includes(valorNormalizado);
   });
     
   if (resultados.length === 0) {
     console.log("⚠️ No se encontraron libros con ese criterio.");
   }
+
   return resultados;
 };
 
@@ -395,62 +409,27 @@ const devolverLibro = (idLibro, idUsuario) => {
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
 // a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
-// Cantidad total de libros, libros prestados, libros por género, y el libro más antiguo y más nuevo.
 
 const generarReporteDeLibros = () => {
-
-  // Funcion que permite mostrar una sección específica del reporte de libros.
-  const mostrarSeccionDelReporte = (seccion) => {
-  const reporte = generarReporteDeLibros();
-  if (!reporte) return;
-
-  // Se valida que la sección solicitada exista en el reporte.
-  if (!reporte[seccion]) {
-    console.log("❌ Sección no válida.");
-    console.log("👉 Opciones disponibles: totalLibros, librosPrestados, librosPorGenero, libroMasAntiguo, libroMasNuevo.");
-    return;
-  }
-
-  // Se muestra la sección solicitada del reporte.
-  console.log(`\n📌 ${seccion}:`);
-  console.log(reporte[seccion]);
-};
-
   // Se valida que el array de libros no esté vacío.
   if (libros.length === 0) {
     console.log("⚠️ No hay libros en la biblioteca para generar un reporte.");
     return null;
   }
 
-  // Se obtiene la cantidad total de libros en la biblioteca.
   const totalLibros = libros.length;
-
-  // Se obtiene la cantidad de libros cuyo estado es "no disponible" (prestados).
   const librosPrestados = libros.filter(libro => !libro.disponible).length;
 
-  // Se agrupan los libros por género y se cuenta cuántos hay por cada uno.
   const librosPorGenero = libros.reduce((acumulador, libro) => {
     acumulador[libro.genero] = (acumulador[libro.genero] || 0) + 1;
     return acumulador;
   }, {});
 
-  // Se identifica el libro con el año de publicación más antiguo.
-  const libroMasAntiguo = libros.reduce((acumulador, libroActual) => 
-    libroActual.anio < acumulador.anio 
-    ? libroActual 
-    : acumulador
-  );
+  const libroMasAntiguo = libros.reduce((a, b) => a.anio < b.anio ? a : b);
+  const libroMasNuevo = libros.reduce((a, b) => a.anio > b.anio ? a : b);
 
-  // Se identifica el libro con el año de publicación más reciente.
-  const libroMasNuevo = libros.reduce((acumulador, libroActual) => 
-    libroActual.anio > acumulador.anio 
-    ? libroActual 
-    : acumulador
-  );
-
-// Se construye el reporte consolidado.
-const reporteDeLibros = {
-    totalLibros : totalLibros,
+  const reporte = {
+    totalLibros: totalLibros,
     librosPrestados: librosPrestados,
     librosPorGenero: librosPorGenero,
     libroMasAntiguo: {
@@ -463,7 +442,17 @@ const reporteDeLibros = {
     }
   };
 
-  return reporteDeLibros;
+  console.log("\n📊 Reporte general de la biblioteca:");
+  console.log(`📚 Total de libros: ${reporte.totalLibros}`);
+  console.log(`📕 Libros prestados: ${reporte.librosPrestados}`);
+  console.log("📘 Libros por género:");
+  for (const genero in reporte.librosPorGenero) {
+    console.log(`   - ${genero}: ${reporte.librosPorGenero[genero]}`);
+  }
+  console.log(`📖 Libro más antiguo: "${reporte.libroMasAntiguo.titulo}" (${reporte.libroMasAntiguo.anio})`);
+  console.log(`📕 Libro más nuevo: "${reporte.libroMasNuevo.titulo}" (${reporte.libroMasNuevo.anio})`);
+
+  return reporte;
 };
 
 // PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
@@ -629,14 +618,21 @@ const menuPrincipal = () => {
         let anio = Number(prompt("Ingrese el año de publicacion: "));
         let genero = prompt("Ingrese el género del libro: ");
         agregarLibro(id, titulo, autor, anio, genero);
-        console.log("📚 Libro agregado correctamente.");
         break;
 
       case "2":
         let criterio = prompt("Buscar por (titulo, autor, genero): ");
         let valor = prompt("Ingrese el valor a buscar: ");
         let resultados = buscarLibro(criterio, valor);
-        console.log(resultados);
+
+        if (resultados.length === 0) {
+          console.log("⚠️ No se encontraron libros con ese criterio.");
+        } else {
+          console.log(`\n📚 Resultados de la búsqueda (${resultados.length}):`);
+          resultados.forEach(libro => {
+            console.log(`- ${libro.titulo} | Autor: ${libro.autor} | Género: ${libro.genero} | Año: ${libro.anio} | Disponible: ${libro.disponible ? "Sí" : "No"}`);
+          });
+      }
         break;
 
       case "3":
@@ -653,7 +649,6 @@ const menuPrincipal = () => {
         const nombreUsuario = prompt("Ingrese el nombre del usuario: ");
         const emailUsuario = prompt("Ingrese el email del usuario: ");
         registrarUsuario(nombreUsuario, emailUsuario);
-        console.log("✅ Usuario registrado correctamente.");
         break;
 
       case "6":
@@ -679,17 +674,7 @@ const menuPrincipal = () => {
         break;
 
       case "10":
-        const reporte = generarReporteDeLibros();
-        if (reporte) {
-          console.log("\n📊 Reporte general de la biblioteca:");
-          console.log(reporte);
-
-          const deseaVerParte = prompt("¿Querés ver una parte específica del reporte? (si/no): ");
-          if (deseaVerParte.toLowerCase() === "si") {
-            const seccion = prompt("Ingresá la sección que querés ver (totalLibros, librosPrestados, librosPorGenero, libroMasAntiguo, libroMasNuevo): ");
-            mostrarSeccionDelReporte(seccion);
-          }
-        }
+        generarReporteDeLibros();
         break;
 
       case "11":
@@ -702,7 +687,6 @@ const menuPrincipal = () => {
 
       case "13":
         normalizarDatos();
-        console.log("🔧 Datos normalizados correctamente.");
         break;
 
       case "14":
