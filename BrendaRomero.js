@@ -470,22 +470,32 @@ const reporteDeLibros = {
 // a) Función que identifica los libros cuyo título contiene más de una palabra compuesta solo por letras.
 
 const librosConPalabrasEnTitulo = () => {
-  let librosFiltrados = libros.filter(libro => {
-    let titulo = libro.titulo;
+
+  // Se valida que el array no esté vacío.
+  if (libros.length === 0) {
+    console.log("⚠️ No hay libros disponibles para analizar.");
+    return [];
+  }
+
+  // Se filtran los libros que cumplen con las condiciones:
+  const librosFiltrados = libros.filter(libro => {
+    const tituloNormalizado = libro.titulo.trim();
 
     // Verifica que el titulo tenga mas de una palabra.
-    let tieneVariasPalabras = titulo.trim().split(" ").length > 1;
+    const tieneVariasPalabras = tituloNormalizado.split(" ").length > 1;
 
     // Verifica que el titulo contenga solo letras (incluyendo tildes, ñ y ü) y espacios.
-    let soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(titulo);
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(tituloNormalizado);
     return tieneVariasPalabras && soloLetras;
   });
   
   // Se genera un nuevo array con los títulos validos.
-  let titulos = librosFiltrados.map(libro => libro.titulo);
+const titulosFiltrados = librosFiltrados.map(libro => libro.titulo);
 
-  console.log(titulos);
-  return titulos;
+console.log("\n📗 Títulos con más de una palabra y solo letras:");
+console.log(titulosFiltrados);
+
+return titulosFiltrados;
 };
 
 // PUNTO 7: CALCULOS ESTADISTICOS n
@@ -580,12 +590,18 @@ const menuPrincipal = () => {
     console.log("\n--- MENÚ PRINCIPAL ---");
     console.log("1. Agregar libro");
     console.log("2. Buscar libro");
-    console.log("3. Mostrar usuarios");
-    console.log("4. Generar reporte");
+    console.log("3. Ordenar libros");
+    console.log("4. Borrar libro");
     console.log("5. Registrar usuario");
-    console.log("6. Prestar libro"); 
-
-    console.log("7. Salir");
+    console.log("6. Mostrar usuarios");
+    console.log("7. Borrar usuario");
+    console.log("8. Prestar libro");
+    console.log("9. Devolver libro");
+    console.log("10. Generar reporte de libros");
+    console.log("11. Ver títulos con más de una palabra y solo letras");
+    console.log("12. Calcular estadísticas generales");
+    console.log("13. Normalizar datos");
+    console.log("14. Salir");
 
     opcion = prompt("Seleccione una opción: ");
 
@@ -608,10 +624,45 @@ const menuPrincipal = () => {
         break;
 
       case "3":
-        console.log(mostrarTodosLosUsuarios());
+        const criterioOrden = prompt("¿Por qué criterio querés ordenar? (id, titulo, autor, anio, genero, disponible): ");
+        ordenarLibros(criterioOrden);
         break;
 
       case "4":
+        const idABorrar = Number(prompt("Ingrese el ID del libro a borrar: "));
+        borrarLibro(idABorrar);
+        break;
+
+      case "5":
+        const nombreUsuario = prompt("Ingrese el nombre del usuario: ");
+        const emailUsuario = prompt("Ingrese el email del usuario: ");
+        registrarUsuario(nombreUsuario, emailUsuario);
+        console.log("✅ Usuario registrado correctamente.");
+        break;
+
+      case "6":
+        console.log(mostrarTodosLosUsuarios());
+        break;
+
+      case "7":
+        const nombreABorrar = prompt("Ingrese el nombre del usuario a borrar: ");
+        const emailABorrar = prompt("Ingrese el email del usuario a borrar: ");
+        borrarUsuario(nombreABorrar, emailABorrar);
+        break;
+    
+      case "8":
+        const idLibroPrestar = Number(prompt("Ingrese el ID del libro a prestar: "));
+        const idUsuarioPrestar = Number(prompt("Ingrese el ID del usuario: "));
+        prestarLibro(idLibroPrestar, idUsuarioPrestar);
+        break;
+
+      case "9":
+        const idLibroDevolver = Number(prompt("Ingrese el ID del libro a devolver: "));
+        const idUsuarioDevolver = Number(prompt("Ingrese el ID del usuario: "));
+        devolverLibro(idLibroDevolver, idUsuarioDevolver);
+        break;
+
+      case "10":
         const reporte = generarReporteDeLibros();
         if (reporte) {
           console.log("\n📊 Reporte general de la biblioteca:");
@@ -620,36 +671,32 @@ const menuPrincipal = () => {
           const deseaVerParte = prompt("¿Querés ver una parte específica del reporte? (si/no): ");
           if (deseaVerParte.toLowerCase() === "si") {
             const seccion = prompt("Ingresá la sección que querés ver (totalLibros, librosPrestados, librosPorGenero, libroMasAntiguo, libroMasNuevo): ");
-
-            // Función que muestra solo una parte específica del reporte, según lo que indique el usuario.
             mostrarSeccionDelReporte(seccion);
           }
         }
         break;
 
-      case "5":
-        let nombreUsuario = prompt("Ingrese el nombre del usuario: ");
-        let emailUsuario = prompt("Ingrese el email del usuario: ");
-
-        registrarUsuario(nombreUsuario, emailUsuario);
-        console.log("✅ Usuario registrado correctamente.");
+      case "11":
+        librosConPalabrasEnTitulo();
         break;
 
-      case "6":
-        let idLibroPrestar = Number(prompt("Ingrese el ID del libro que desea prestar: "));
-        let idUsuarioPrestar = Number(prompt("Ingrese el ID del usuario al que se le prestará el libro: "));
-
-        prestarLibro(idLibroPrestar, idUsuarioPrestar);
+      case "12":
+        calcularEstadisticas();
         break;
 
-      case "7":
-        console.log("Saliendo del sistema...");
+      case "13":
+        normalizarDatos();
+        console.log("🔧 Datos normalizados correctamente.");
         break;
-    
+
+      case "14":
+        console.log("👋 Saliendo del sistema...");
+        break;
+
       default:
         console.log("⚠️ Opción no válida. Intente nuevamente");
     }
-  } while (opcion !== "7");
+  } while (opcion !== "14");
 };
 
 menuPrincipal();
