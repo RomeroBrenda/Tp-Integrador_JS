@@ -139,12 +139,13 @@ let usuarios = [
 // a) Funcion que agrega un nuevo libro al array.
 
 const agregarLibro = (id, titulo, autor, anio, genero) => {
+
   // Verifica que los datos no esten vacios ni sean inválidos.
   if (!id || !titulo || !autor || !anio || !genero || isNaN(id) || isNaN(anio)) {
     console.log("❌ Datos inválidos. Verifique los campos ingresados.");
     return;
   }
-  
+
   // Verifica que no exista un libro con el mismo ID.
   if (libros.some(libro => libro.id === id)) {
     console.log("❌ Ya existe un libro con ese ID.");
@@ -165,15 +166,16 @@ const agregarLibro = (id, titulo, autor, anio, genero) => {
 };
 
 // b) Funcion que busca un libro segun el criterio indicado (titulo, autor o genero).
-
-// Función que normaliza un texto eliminando tildes, espacios al inicio/final y convierte a minúsculas.
-const normalizarTexto = (texto) => {
-  if (!texto) return "";
-  return texto
+// Esta funcion normaliza una cadena de texto para facilitar la interacción con el usuario.
+const controlPrompt = (cadena) => {
+  if (!cadena) return "";
+  return cadena
+    .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0301\u0308]/g, "") 
-    .trim();
+    .replace(/[\u0300-\u036f]/g, "") // Elimina tildes
+    .replace(/ñ/g, "n")              // Reemplaza ñ por n
+    .replace(/Ñ/g, "n");             // Reemplaza Ñ por n
 };
 
 const buscarLibro = (criterio, valor) => {
@@ -185,17 +187,13 @@ const buscarLibro = (criterio, valor) => {
     return [];
   }
 
-  const valorNormalizado = normalizarTexto(valor);
+  const valorNormalizado = controlPrompt(valor);
 
   // Se filtran los libros según el criterio indicado, ignorando mayúsculas y permitiendo coincidencias parciales.
   const resultados = libros.filter( libro => {
-    const campoNormalizado = normalizarTexto(libro[criterio]);
+    const campoNormalizado = controlPrompt(libro[criterio]);
     return campoNormalizado.includes(valorNormalizado);
   });
-    
-  if (resultados.length === 0) {
-    console.log("⚠️ No se encontraron libros con ese criterio.");
-  }
 
   return resultados;
 };
@@ -204,7 +202,6 @@ const buscarLibro = (criterio, valor) => {
 // Esta función modifica el array original "libros" directamente.
 
 const ordenarLibros = (criterio) => {
-
   const criteriosValidos = ["id", "titulo", "autor", "anio", "genero", "disponible"];
 
   // Valida que el criterio este dentro de una lista de campos permitidos.
@@ -276,7 +273,6 @@ const registrarUsuario = (nombre, email) => {
     return;
   }
 
-  
   // Se genera un ID único para el nuevo usuario.
   const nuevoId = usuarios.length > 0 
   ? usuarios[usuarios.length - 1].id + 1 
@@ -294,14 +290,12 @@ const registrarUsuario = (nombre, email) => {
 };
 
 // b) Funcion que devuelve el array completo de usuarios registrados.
-
 const mostrarTodosLosUsuarios = () => {
   return usuarios;
 };
 
 // c) Funcion que busca y retorna el primer usuario que coincida con el email proporcionado. 
 // Retorna null si no existe.
-
 const buscarUsuario = (email) => {
 
   // Se busca el primer usuario cuyo email coincida exactamente, ignorando mayúsculas.
@@ -316,7 +310,6 @@ const buscarUsuario = (email) => {
 };
 
 // d) Funcion que elimina del array "usuarios" al usuario que coincida con nombre y email indicados.
-
 const borrarUsuario = (nombre, email) => {
 
   const usuarioExiste = usuarios.some(usuario =>
@@ -339,7 +332,6 @@ const borrarUsuario = (nombre, email) => {
 
 // PUNTO 4: SISTEMA DE PRESTAMOS
 // a) Función para prestar un libro.
-
 const prestarLibro = (idLibro, idUsuario) => {
   let libro = libros.find(libro => libro.id === idLibro);
   
@@ -376,7 +368,6 @@ console.log(`✅ El libro "${libro.titulo}" fue prestado a ${usuario.nombre}.`);
 };
 
 // b) Función para devolver un libro.
-
 const devolverLibro = (idLibro, idUsuario) => {
   const libro = libros.find(libro => libro.id === idLibro);
 
@@ -408,15 +399,16 @@ const devolverLibro = (idLibro, idUsuario) => {
 };
 
 // PUNTO 5: SISTEMA DE PRESTAMOS
-// a) Funcion que genera un reporte de los libros en la biblioteca, incluyendo:
-
+// a) Funcion que genera un reporte de los libros en la biblioteca.
 const generarReporteDeLibros = () => {
+
   // Se valida que el array de libros no esté vacío.
   if (libros.length === 0) {
     console.log("⚠️ No hay libros en la biblioteca para generar un reporte.");
     return null;
   }
-
+  
+  //Calcula el total de libros, los libros prestados y los libros por género.
   const totalLibros = libros.length;
   const librosPrestados = libros.filter(libro => !libro.disponible).length;
 
@@ -424,10 +416,12 @@ const generarReporteDeLibros = () => {
     acumulador[libro.genero] = (acumulador[libro.genero] || 0) + 1;
     return acumulador;
   }, {});
-
+  
+  // Identifica el libro mas antiguo y el más nuevo basado en el año de publicación.
   const libroMasAntiguo = libros.reduce((a, b) => a.anio < b.anio ? a : b);
   const libroMasNuevo = libros.reduce((a, b) => a.anio > b.anio ? a : b);
 
+  // Se crea un objeto con toda la información recopilada para el reporte.
   const reporte = {
     totalLibros: totalLibros,
     librosPrestados: librosPrestados,
@@ -457,7 +451,6 @@ const generarReporteDeLibros = () => {
 
 // PUNTO 6: IDENTIFICACION AVANZADA DE LIBROS
 // a) Función que identifica los libros cuyo título contiene más de una palabra compuesta solo por letras.
-
 const librosConPalabrasEnTitulo = () => {
 
   // Se valida que el array no esté vacío.
@@ -466,7 +459,7 @@ const librosConPalabrasEnTitulo = () => {
     return [];
   }
 
-  // Se filtran los libros que cumplen con las condiciones:
+  // Se filtran los libros que cumplen con las condiciones.
   const librosFiltrados = libros.filter(libro => {
     const tituloNormalizado = libro.titulo.trim();
 
@@ -491,7 +484,6 @@ return titulosFiltrados;
 // Función que calcula estadisticas generales de los libros en la biblioteca.
 // Incluye el promedio de años de publicación, el año más frecuente, y la diferencia entre el libro 
 // más antiguo y el más nuevo.
-
 const calcularEstadisticas = () => {
   if (libros.length === 0) {
     console.log("⚠️ No hay libros en la biblioteca.");
@@ -552,7 +544,6 @@ const calcularEstadisticas = () => {
 
 // PUNTO 8: MANEJO DE CADENAS
 // a) Funcion que normaliza los datos de los libros y usuarios para mantener uniformidad y evitar errores.
-
 const normalizarDatos = () => {
 
   // Se valida que existan libros y usuarios para normalizar.
@@ -587,7 +578,6 @@ console.log("✅ Datos normalizados correctamente.");
 
 // PUNTO 9: INTERFAZ DE USUARIO POR CONSOLA
 // Funcion que muestra un menu principal con opciones para la interacción del usuario.
-
 const menuPrincipal = () => {
   let opcion;
 
