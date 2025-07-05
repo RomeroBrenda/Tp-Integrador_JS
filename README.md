@@ -33,6 +33,9 @@ TP INTEGRADOR JS/
 ├── node_modules/ — Dependencias (ignorada por Git)  
 ├── .gitignore — Ignora node_modules al subir a GitHub  
 └── README.md — Este archivo  
+
+---
+
 ✅ Funcionalidades implementadas
 Estructura de datos para libros y usuarios
 
