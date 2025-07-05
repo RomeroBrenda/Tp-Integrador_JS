@@ -562,24 +562,38 @@ const calcularEstadisticas = () => {
 };
 
 // PUNTO 8: MANEJO DE CADENAS
-// a) Funcion que normaliza los datos de los libros y usuarios.
+// a) Funcion que normaliza los datos de los libros y usuarios para mantener uniformidad y evitar errores.
 
 const normalizarDatos = () => {
- 
- // Convierte todos los títulos de los libros a mayúsculas.
- libros.forEach(libro => {
-  libro.titulo = libro.titulo.toUpperCase(); 
- });
 
- // Elimina espacios en blanco al inicio y final del nombre del autor.
- libros.forEach(libro => {
-  libro.autor = libro.autor.trim();
- });
+  // Se valida que existan libros y usuarios para normalizar.
+  if (libros.length === 0 && usuarios.length === 0) {
+    console.log("⚠️ No hay datos para normalizar.");
+    return;
+  }
  
-// Convierte todos los emails de los usuarios a minúsculas.
+ // Convierte todos los títulos de los libros a mayúsculas y elimina espacios al principio y al final.
+ libros.forEach(libro => {
+  if (libro.titulo && typeof libro.titulo === "string") {
+    libro.titulo = libro.titulo.trim().toUpperCase(); 
+  };
+});
+
+// Normaliza autores de libros, eliminando espacios al principio y al final.
+libros.forEach(libro => {
+  if (libro.autor && typeof libro.autor === "string") {
+    libro.autor = libro.autor.trim();
+  }
+});
+ 
+// Convierte todos los emails de los usuarios a minúsculas y elimina espacios al principio y al final.
  usuarios.forEach(usuario => {
-  usuario.email = usuario.email.toLowerCase(); // Convierte el email a minúsculas.
- });
+  if (usuario.email && typeof usuario.email === "string") {
+   usuario.email = usuario.email.trim().toLowerCase(); 
+ };
+});
+
+console.log("✅ Datos normalizados correctamente.");
 };
 
 // PUNTO 9: INTERFAZ DE USUARIO POR CONSOLA
